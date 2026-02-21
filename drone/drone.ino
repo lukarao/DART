@@ -77,8 +77,8 @@ void loop() {
     alt.updateBarAlt(bar.alt, bar.ts); //update altitude estimator with current altitude measurement
   }
 
-  //update gps
-  gps.update();
+  // send current altitude measurement to hub
+  wifi_rcl.sendAlt(alt.getH());
 
   cli.update(); //process CLI commands
 }

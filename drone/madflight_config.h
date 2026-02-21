@@ -75,9 +75,9 @@ bar_i2c_bus   -1
 //bat_cal_i,     1     // for ADC: current scale, value is: actual_current_in_a / adc_reading; for INA226/228: rshunt value in ohm
 
 //--- GPS ---
-gps_gizmo      UBLOX  // options: NONE, UBLOX
-gps_baud       0     // use 0 for auto baud
-gps_ser_bus    0
+//gps_gizmo      NONE  // options: NONE, UBLOX
+//gps_baud       0     // use 0 for auto baud
+//gps_ser_bus    -1
 
 //--- BBX --- Black Box Data Logger  (use spi -OR- mmc)
 //bbx_gizmo      NONE  // options: NONE, SDSPI, SDMMC
