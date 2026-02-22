@@ -36,13 +36,13 @@ const char madflight_config[] = R""(
 
 //--- IMU --- Inertial Measurement Unit  (use spi -OR- i2c bus)
 imu_gizmo      MPU9250  // options: NONE, BMI270, ICM42688, ICM45686, MPU6000, MPU6050, MPU6500, MPU9150, MPU9250
-imu_bus_type   SPI   // options: SPI, I2C (not all combinations of gizmo and bus_type are supported)
-//imu_align      CW0   // options: CW0, CW90, CW180, CW270, CW0FLIP, CW90FLIP, CW180FLIP, CW270FLIP
-imu_spi_bus    0    // spi
-pin_imu_cs     34    // spi
-pin_imu_int    24    // spi and i2c
-//imu_i2c_bus    -1    // i2c
-//imu_i2c_adr     0    // i2c: enter decimal i2c address, not hex (use 0 for default i2c address)
+imu_bus_type   I2C   // options: SPI, I2C (not all combinations of gizmo and bus_type are supported)
+imu_align      CW0   // options: CW0, CW90, CW180, CW270, CW0FLIP, CW90FLIP, CW180FLIP, CW270FLIP
+//imu_spi_bus    0    // spi
+//pin_imu_cs     5    // spi
+pin_imu_int     4    // spi and i2c
+imu_i2c_bus     0    // i2c
+imu_i2c_adr     104    // i2c: enter decimal i2c address, not hex (use 0 for default i2c address)
 
 // IMPORTANT: the IMU sensor should be the ONLY sensor on the selected bus, interrupt pin is required
 
@@ -56,8 +56,8 @@ pin_imu_int    24    // spi and i2c
 
 //--- BAR --- Barometer
 bar_gizmo      BMP280  // options: NONE, BMP280, BMP388, BMP390, BMP580, HP203B, MS5611
-bar_i2c_adr    118 // 0x76; assumes that SDO is connected to ground
-bar_i2c_bus   -1
+bar_i2c_adr    0
+bar_i2c_bus    0
 
 //--- MAG --- Magnetometer
 //mag_gizmo      NONE  // options: NONE, QMC6309, QMC5883L, QMC5883P, RM3100
@@ -109,17 +109,17 @@ bar_i2c_bus   -1
 ahr_gizmo      MAHONY // options: MAHONY, MAHONY_BF, MADGWICK, VQF
 
 //--- Serial bus 0 ---
-pin_ser0_rx   25
-pin_ser0_tx   27
+//pin_ser0_rx   -1
+//pin_ser0_tx   -1
 
 //--- Serial bus 1 ---
 //pin_ser1_rx   -1
-//pin_ser1_tx   -1 
+//pin_ser1_tx   -1
 
 //--- SPI bus 0 ---
-pin_spi0_miso 38
-pin_spi0_mosi 36
-pin_spi0_sclk 35
+pin_spi0_miso 19
+pin_spi0_mosi 23
+pin_spi0_sclk 18
 
 //--- SPI bus 1 ---
 //pin_spi1_miso -1
@@ -127,8 +127,8 @@ pin_spi0_sclk 35
 //pin_spi1_sclk -1
 
 //--- I2C Bus 0 ---
-//pin_i2c0_sda  42
-//pin_i2c0_scl  39
+pin_i2c0_sda  21
+pin_i2c0_scl  22
 
 //--- I2C Bus 1 ---
 //pin_i2c1_sda  -1

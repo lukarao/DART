@@ -30,7 +30,6 @@ void WifiRcl::update() {
 
   if (client && !client.connected()) {
     Serial.println("RCL: Client disconnected");
-    client = nullptr;
   }
 
   if (client && client.connected()) {

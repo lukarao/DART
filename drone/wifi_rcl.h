@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 #include <WiFi.h>
-#include <Servo.h>
+#include <ESP32Servo.h>
 
 class WifiRcl {
   public:
@@ -21,5 +21,6 @@ class WifiRcl {
     WiFiServer server = WiFiServer(2000);
     WiFiClient client;
     Servo armServo;
+    int armState = 0;
     unsigned long armActionStart = 0;
 };
