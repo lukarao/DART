@@ -1,8 +1,6 @@
 #include <Wire.h>
 #include <MPU6050_tockn.h>
 #include <Adafruit_BMP280.h>
-#include <Adafruit_AHRS.h>
-#include <SimpleKalmanFilter.h>
 
 // ----- CONSTANTS -----
 
@@ -19,11 +17,6 @@ MPU6050 imu(imu_i2c);
 
 TwoWire bar_i2c = TwoWire(1);
 Adafruit_BMP280 bar(&bar_i2c);
-
-Adafruit_Mahony ahrs;
-SimpleKalmanFilter altKF(1, 1, 0.01);
-
-float groundAltitude = 0.0;
 
 void setup() {
   Serial.begin(115200);
@@ -51,32 +44,23 @@ void setup() {
 }
 
 void loop() {
+  // imu.update performs attitude (pitch, roll, yaw) sensor fusion
   imu.update();
 
-  // Attitude (pitch, roll, yaw) sensor fusion
-  ahrs.updateIMU(
-    imu.getGyroX(), imu.getGyroY(), imu.getGyroZ(),
-    imu.getAccX(), imu.getAccY(), imu.getAccZ()
-  );
-
-  // Altitude sensor fusion
-  // TODO: fix drifting (tends to rise over time)
-  float altitude = altKF.updateEstimate(bar.readAltitude() - groundAltitude);
-
   Serial.print("Pitch: ");
-  Serial.print(ahrs.getPitch());
+  Serial.print(imu.getAngleX());
   Serial.print("\t");
   
   Serial.print("Roll: ");
-  Serial.print(ahrs.getRoll());
+  Serial.print(imu.getAngleY());
   Serial.print("\t");
 
   Serial.print("Yaw: ");
-  Serial.print(ahrs.getYaw());
+  Serial.print(imu.getAngleZ());
   Serial.print("\t");
 
   Serial.print("Altitude: ");
-  Serial.print(altitude);
+  Serial.print(bar.readAltitude() - groundAltitude);
 
   Serial.println();
 }
