@@ -11,10 +11,10 @@ const int BAR_SDA = 21;
 const int BAR_SCL = 19;
 
 const int MOTOR_PINS[4] = {
-  32, // top right
-  33, // top left
-  25, // bottom right
-  26  // bottom left
+  32, // top left
+  33, // top right
+  25, // bottom left
+  26  // bottom right
 };
 
 const int ARM_PIN = 27;
@@ -25,7 +25,7 @@ const int PWM_FREQ = 400; // hz
 const int PWM_RES = 16;
 
 // pulse width (μs)
-const int PWM_MIN = 1000; // might be 950
+const int PWM_MIN = 1000;
 const int PWM_MAX = 2000;
 
 // ----- END CONSTANTS -----
@@ -40,6 +40,14 @@ float groundAltitude = 0.0;
 
 void setup() {
   Serial.begin(115200);
+
+  // Initialize ESCs
+  Serial.println("Initializing ESCs");
+  for (int i = 0; i < 4; i++) {
+    ledcAttachChannel(MOTOR_PINS[i], PWM_FREQ, PWM_RES, i);
+    setESC(i, 0.0);
+  }
+  delay(3000); // allow ESCs to arm
 
   // Initialize IMU
   Serial.println("Initializing IMU");
@@ -59,33 +67,16 @@ void setup() {
   Serial.println("Calibrating barometer");
   groundAltitude = bar.readAltitude();
 
-  // Initialize and calibrate ESCs
-  Serial.println("Initializing and calibrating ESCs");
-  for (int i = 0; i < 4; i++) {
-    ledcAttachChannel(MOTOR_PINS[i], PWM_FREQ, PWM_RES, i);
-    setESC(i, 1.0);
-  }
-  delay(2000);
-  for (int i = 0; i < 4; i++) {
-    setESC(i, 0.0);
-  }
-  delay(2000);
-
   // Test ESCs by ramping throttle up and down
   Serial.println("Testing ESCs...");
-  for (float throttle = 0.0; throttle <= 1.0; throttle += 0.01) {
-    for (int i = 0; i < 4; i++) {
-      setESC(i, throttle);
-    }
-    delay(100);
+  for (float t = 0.0; t <= 0.3; t += 0.01) {
+    for (int i = 0; i < 4; i++) setESC(i, t);
+    delay(500);
   }
-  for (float throttle = 1.0; throttle <= 0.0; throttle -= 0.01) {
-    for (int i = 0; i < 4; i++) {
-      setESC(i, throttle);
-    }
-    delay(100);
+  for (float t = 0.3; t >= 0.0; t -= 0.01) {
+    for (int i = 0; i < 4; i++) setESC(i, t);
+    delay(500);
   }
-  Serial.println("Testing ESCs...");
 }
 
 void loop() {
@@ -108,7 +99,13 @@ void loop() {
 }
 
 void setESC(int motorIndex, float throttle) {
-  int pulse_width = PWM_MIN + (int)((PWM_MAX - PWM_MIN) * throttle);
-  uint32_t duty_cycle = (uint32_t)((float)pulse_width / 2500.0 * 65535.0);
-  ledcWrite(MOTOR_PINS[motorIndex], duty_cycle);
+  int pulseWidth = PWM_MIN + (PWM_MAX - PWM_MIN) * throttle;
+
+  float period = 1000000.0 / PWM_FREQ;
+  uint32_t maxDutyCycle = (1 << PWM_RES) - 1;
+
+  uint32_t dutyCycle = (pulseWidth / period) * maxDutyCycle;
+
+  ledcWrite(MOTOR_PINS[motorIndex], dutyCycle);
+
 }
